@@ -34,11 +34,17 @@ app.get("/testListing",(req,res) =>{
     console.log("sample listing stored");
     res.send("Listing created");
 });
-app.get("/listing",async (req,res) =>{
+//index route to show all listings
+app.get("/listings",async (req,res) =>{
    const allListings = await Listing.find({});
    res.render("listings/index.ejs",{allListings});
 });
-
+//show route to show a single listing
+app.get("/listings/:id", async (req,res) =>{
+    const {id}=req.params;
+    const listing = await Listing.findById(id);
+    res.render("listings/show.ejs",{listing});
+});
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
 });
