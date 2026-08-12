@@ -22,10 +22,17 @@ const listingSchema = new Schema({
         type: String,
         required: true  
     },
-    images: {
+    image: {
+        filename: {
+            type: String,
+            required: true
+        },
+        url:{
         type: String,
+        required: true,
         default: "https://tse2.mm.bing.net/th/id/OIP.Kug03Hkb54NM-7rqhBg50AAAAA?r=0&w=450&h=384&rs=1&pid=ImgDetMain&o=7&rm=3",
         set: (v) => v ===""?"https://tse2.mm.bing.net/th/id/OIP.Kug03Hkb54NM-7rqhBg50AAAAA?r=0&w=450&h=384&rs=1&pid=ImgDetMain&o=7&rm=3":v,
+        }
     }
 });
 

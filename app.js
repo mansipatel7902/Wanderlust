@@ -4,6 +4,9 @@ const app = express();
 const port = 3000;
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
+const path = require("path");
+app.set("view engine","ejs");
+app.set("views",path.join(__dirname,"views"));
 
 async function main() {
     await mongoose.connect(process.env.MONGODB_URL);
@@ -31,7 +34,11 @@ app.get("/testListing",(req,res) =>{
     console.log("sample listing stored");
     res.send("Listing created");
 });
+app.get("/listing",async (req,res) =>{
+   const allListings = await Listing.find({});
+   res.render("listings/index.ejs",{allListings});
+});
 
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
-})
+});
