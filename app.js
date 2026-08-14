@@ -21,10 +21,7 @@ app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.use((req, res, next) => {
-    console.log("REQUEST:", req.method, req.url);
-    next();
-});
+
 app.get("/",(req,res) =>{
     res.send("hi! i am root");
 })
@@ -73,6 +70,13 @@ app.put("/listings/:id",async (req,res) =>{
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,req.body.listing);
     res.redirect(`/listings/${id}`);
+});
+//delete route for delete listing
+app.delete("/listings/:id", async(req,res) =>{
+    let {id} =req.params;
+    let deletedlisting = await Listing.findByIdAndDelete(id);
+    console.log(deletedlisting);
+    res.redirect("/listings");
 });
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
