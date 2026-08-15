@@ -1,0 +1,16 @@
+.navbar{
+    height:5rem;
+    background-color: #ffffff;
+}
+.fa-brands{
+    color: #fe424d;
+    font-size: 2rem;
+}
+.nav-link{
+    color: #000 !important;
+}
+.navbar {
+    position: sticky !important;
+    top: 0;
+    z-index: 1020;
+}
