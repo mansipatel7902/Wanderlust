@@ -2,7 +2,7 @@
     height:5rem;
     background-color: #ffffff;
 }
-.fa-brands{
+.fa-airbnb{
     color: #fe424d;
     font-size: 2rem;
 }
@@ -13,4 +13,40 @@
     position: sticky !important;
     top: 0;
     z-index: 1020;
+}
+/* Footer */
+.f-info-links a{
+    text-decoration: none;
+    color: #000;
+}
+.f-info-links a:hover{
+    text-decoration: underline;
+    color: rgb(3, 39, 80)
+}
+.f-info{
+    height: 7rem;
+    background-color: #f8f9fad3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.f-info-links,.f-info-social,.f-info-copy{
+    width: 100%;
+}
+.f-info-social{
+    font-size: 1.5rem;
+    margin: 0rem 3rem 0rem 3rem;
+}
+.fa-facebook:hover{
+    background-color: #b9b9b9;
+}
+.fa-twitter:hover{
+    background-color: #b9b9b9;
+
+}
+.fa-instagram:hover{
+    background-color: #b9b9b9;
+
 }
