@@ -50,3 +50,23 @@
     background-color: #b9b9b9;
 
 }
+/*cards*/
+.card{
+    border:none !important;
+    margin-bottom: 2rem;
+}
+.card:hover{
+    box-shadow: 0 0 10px 0 gray;
+    transition: all 0.2s ease-in-out;
+    opacity: 0.9;
+    background-color: #f8f9fa;
+}
+.card-img-top{
+    border-radius: 1rem !important;
+    height: 20rem;
+    width: 100% !important;
+    object-fit: cover;
+}
+.card-body{
+    padding: 1rem !important;
+}
