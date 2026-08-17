@@ -1,3 +1,12 @@
+body{
+    /* font-family: "Plus Jakarta Sans",sans-serif !important; */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container{
+    flex:1
+}
 .navbar{
     height:5rem;
     background-color: #ffffff;
@@ -54,6 +63,10 @@
 .card{
     border:none !important;
     margin-bottom: 2rem;
+}
+.links{
+    text-decoration: none;
+    color: inherit;
 }
 .card:hover{
     box-shadow: 0 0 10px 0 gray;
