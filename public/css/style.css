@@ -83,3 +83,33 @@ body{
 .card-body{
     padding: 1rem !important;
 }
+
+/* show listings */
+
+.show-card{
+    border:none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+.show-img {
+    height: 400px;
+    object-fit: cover;
+}
+.show-card .card-body {
+    padding: 1.5rem;
+}
+.show-card .card-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.show-card .card-text {
+    line-height: 1.8;
+}
+
+.btns {
+    display: flex;
+    gap: 1rem;
+    margin-top: 20px;
+}
