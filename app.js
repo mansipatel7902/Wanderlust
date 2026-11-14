@@ -124,6 +124,10 @@ app.delete("/listings/:id", async(req,res) =>{
         res.redirect("/listings");
     }
 });
+// Custom Error Handling Middleware
+app.use((err, req, res, next) => {
+    res.send("Something went wrong!");
+});
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
 });
