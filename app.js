@@ -1,4 +1,5 @@
 require('dotenv').config()
+const wrapAsync = require("./utils/wrapAsync.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const express = require("express");
@@ -50,80 +51,63 @@ app.use((req, res, next) => {
 app.get("/",(req,res) =>{
     res.send("hi! i am root");
 })
-app.get("/testListing",(req,res) =>{
+app.get("/testListing",wrapAsync(async(req,res) =>{
     let listing = new Listing({
         title: "Test Listing",
         description: "This is a test listing",
         price: 100,
         location: "Test Location",
         country: "Test Country",
-        images: ""
+        image: { url: "" }
     });
-    listing.save();
+    await listing.save();
     console.log("sample listing stored");
     res.send("Listing created");
-});
+}));
 //index route to show all listings
-app.get("/listings",async (req,res) =>{
+app.get("/listings",wrapAsync(async (req,res) =>{
    const allListings = await Listing.find({});
    res.render("listings/index.ejs",{allListings});
-});
+}));
 //create route to create a new listing
 app.get("/listings/new",async(req,res) =>{
     res.render("listings/new.ejs");
-})
+});
 //show route to show a single listing
-app.get("/listings/:id", async (req,res) =>{
+app.get("/listings/:id", wrapAsync(async (req,res) =>{
     const {id}=req.params;
     const listing = await Listing.findById(id);
     res.render("listings/show.ejs",{listing});
-});
+}));
 // POST route to create a new listing
-app.post("/listings", async (req, res) => {
-    try {
+app.post("/listings",wrapAsync(async (req, res) => {
         await new Listing(req.body.listing).save();
 
         req.flash("success", "New Listing Created Successfully!");
-
         res.redirect("/listings");
-
-    } catch (err) {
-        req.flash("error", "Failed to create listing!");
-
-        res.redirect("/listings/new");
-    }
-});
+}));
 //edit route to edit a listing
-app.get("/listings/:id/edit",async (req,res) =>{
+app.get("/listings/:id/edit",wrapAsync(async (req,res) =>{
     const {id}=req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs",{listing});
-})
+}))
 //update route to update a listing
-app.put("/listings/:id",async (req,res) =>{
+app.put("/listings/:id",wrapAsync(async (req,res) =>{
     let {id}=req.params;
-    try {
     await Listing.findByIdAndUpdate(id,req.body.listing,{ runValidators: true });
     req.flash("success", "Listing Updated Successfully!");
     res.redirect(`/listings/${id}`);
-    } catch (err) {
-        req.flash("error", "Failed to update listing!");
-        res.redirect(`/listings/${id}/edit`);
-    }
-});
+
+}));
 //delete route for delete listing
-app.delete("/listings/:id", async(req,res) =>{
-    try {
+app.delete("/listings/:id", wrapAsync(async (req, res) => {
     let {id} =req.params;
     let deletedlisting = await Listing.findByIdAndDelete(id);
     req.flash("success", "Listing Deleted Successfully!");
     console.log(deletedlisting);
     res.redirect("/listings");
-    } catch (err) {
-        req.flash("error", "Failed to delete listing!");
-        res.redirect("/listings");
-    }
-});
+}));
 // Custom Error Handling Middleware
 app.use((err, req, res, next) => {
     res.send("Something went wrong!");
