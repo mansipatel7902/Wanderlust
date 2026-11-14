@@ -23,7 +23,7 @@ app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
-app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/",(req,res) =>{
     res.send("hi! i am root");
@@ -58,8 +58,7 @@ app.get("/listings/:id", async (req,res) =>{
 });
 //post route to create a new listing
 app.post("/listings",async (req,res) =>{
-    let {title,description,price,location,country,image} = req.body;
-    await new Listing(req.body).save();
+    await new Listing(req.body.listing).save();
     res.redirect("/listings");
 });
 //edit route to edit a listing
