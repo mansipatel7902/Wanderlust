@@ -1,4 +1,6 @@
 require('dotenv').config()
+const session = require("express-session");
+const flash = require("connect-flash");
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -24,6 +26,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
+
+const sessionOptions = {
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true
+    }
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+});
 
 app.get("/",(req,res) =>{
     res.send("hi! i am root");
@@ -56,10 +78,20 @@ app.get("/listings/:id", async (req,res) =>{
     const listing = await Listing.findById(id);
     res.render("listings/show.ejs",{listing});
 });
-//post route to create a new listing
-app.post("/listings",async (req,res) =>{
-    await new Listing(req.body.listing).save();
-    res.redirect("/listings");
+// POST route to create a new listing
+app.post("/listings", async (req, res) => {
+    try {
+        await new Listing(req.body.listing).save();
+
+        req.flash("success", "New Listing Created Successfully!");
+
+        res.redirect("/listings");
+
+    } catch (err) {
+        req.flash("error", "Failed to create listing!");
+
+        res.redirect("/listings/new");
+    }
 });
 //edit route to edit a listing
 app.get("/listings/:id/edit",async (req,res) =>{
@@ -70,15 +102,27 @@ app.get("/listings/:id/edit",async (req,res) =>{
 //update route to update a listing
 app.put("/listings/:id",async (req,res) =>{
     let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,req.body.listing);
+    try {
+    await Listing.findByIdAndUpdate(id,req.body.listing,{ runValidators: true });
+    req.flash("success", "Listing Updated Successfully!");
     res.redirect(`/listings/${id}`);
+    } catch (err) {
+        req.flash("error", "Failed to update listing!");
+        res.redirect(`/listings/${id}/edit`);
+    }
 });
 //delete route for delete listing
 app.delete("/listings/:id", async(req,res) =>{
+    try {
     let {id} =req.params;
     let deletedlisting = await Listing.findByIdAndDelete(id);
+    req.flash("success", "Listing Deleted Successfully!");
     console.log(deletedlisting);
     res.redirect("/listings");
+    } catch (err) {
+        req.flash("error", "Failed to delete listing!");
+        res.redirect("/listings");
+    }
 });
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
