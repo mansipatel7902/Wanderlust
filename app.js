@@ -126,7 +126,7 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
 // Custom Error Handling Middleware
 app.use((err, req, res, next) => {
     let{statusCode=500, message="Something went wrong!"} = err;
-    res.status(statusCode).send(message);
+    res.status(statusCode).render("error.ejs", { err });
 });
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
