@@ -1,5 +1,6 @@
 require('dotenv').config()
 const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const express = require("express");
@@ -77,6 +78,11 @@ app.get("/listings/new",async(req,res) =>{
 app.get("/listings/:id", wrapAsync(async (req,res) =>{
     const {id}=req.params;
     const listing = await Listing.findById(id);
+
+    if (!listing) {
+        throw new ExpressError(404, "Listing Not Found");
+    }
+
     res.render("listings/show.ejs",{listing});
 }));
 // POST route to create a new listing
@@ -90,12 +96,18 @@ app.post("/listings",wrapAsync(async (req, res) => {
 app.get("/listings/:id/edit",wrapAsync(async (req,res) =>{
     const {id}=req.params;
     const listing = await Listing.findById(id);
+     if (!listing) {
+        throw new ExpressError(404, "Listing Not Found");
+    }
     res.render("listings/edit.ejs",{listing});
 }))
 //update route to update a listing
 app.put("/listings/:id",wrapAsync(async (req,res) =>{
     let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,req.body.listing,{ runValidators: true });
+    const updatedListing = await Listing.findByIdAndUpdate(id,req.body.listing,{ runValidators: true });
+    if (!updatedListing) {
+        throw new ExpressError(404, "Listing Not Found");
+    }
     req.flash("success", "Listing Updated Successfully!");
     res.redirect(`/listings/${id}`);
 
@@ -104,13 +116,17 @@ app.put("/listings/:id",wrapAsync(async (req,res) =>{
 app.delete("/listings/:id", wrapAsync(async (req, res) => {
     let {id} =req.params;
     let deletedlisting = await Listing.findByIdAndDelete(id);
+    if (!deletedlisting) {
+        throw new ExpressError(404, "Listing Not Found");
+    }
     req.flash("success", "Listing Deleted Successfully!");
     console.log(deletedlisting);
     res.redirect("/listings");
 }));
 // Custom Error Handling Middleware
 app.use((err, req, res, next) => {
-    res.send("Something went wrong!");
+    let{statusCode=500, message="Something went wrong!"} = err;
+    res.status(statusCode).send(message);
 });
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
