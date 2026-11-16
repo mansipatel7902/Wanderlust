@@ -1,4 +1,5 @@
 require('dotenv').config()
+const listingSchema = require("./schema.js");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
@@ -48,7 +49,17 @@ app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     next();
 });
+//schema validation middleware
+const validateListing = (req, res, next) => {
+        const { error } = listingSchema.validate(req.body);
 
+
+    if (error) {
+        throw new ExpressError(400, error.details.map((el) => el.message).join(","));
+    } else {
+        next();
+    }
+};
 app.get("/",(req,res) =>{
     res.send("hi! i am root");
 })
@@ -86,7 +97,7 @@ app.get("/listings/:id", wrapAsync(async (req,res) =>{
     res.render("listings/show.ejs",{listing});
 }));
 // POST route to create a new listing
-app.post("/listings",wrapAsync(async (req, res) => {
+app.post("/listings",validateListing,wrapAsync(async (req, res) => {
         await new Listing(req.body.listing).save();
 
         req.flash("success", "New Listing Created Successfully!");
@@ -102,7 +113,7 @@ app.get("/listings/:id/edit",wrapAsync(async (req,res) =>{
     res.render("listings/edit.ejs",{listing});
 }))
 //update route to update a listing
-app.put("/listings/:id",wrapAsync(async (req,res) =>{
+app.put("/listings/:id",validateListing,wrapAsync(async (req,res) =>{
     let {id}=req.params;
     const updatedListing = await Listing.findByIdAndUpdate(id,req.body.listing,{ runValidators: true });
     if (!updatedListing) {
