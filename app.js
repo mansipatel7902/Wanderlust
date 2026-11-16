@@ -1,5 +1,5 @@
 require('dotenv').config()
-const listingSchema = require("./schema.js");
+const { validateListing } = require("./middleware.js"); 
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
@@ -49,17 +49,7 @@ app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     next();
 });
-//schema validation middleware
-const validateListing = (req, res, next) => {
-        const { error } = listingSchema.validate(req.body);
 
-
-    if (error) {
-        throw new ExpressError(400, error.details.map((el) => el.message).join(","));
-    } else {
-        next();
-    }
-};
 app.get("/",(req,res) =>{
     res.send("hi! i am root");
 })
@@ -131,7 +121,6 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
         throw new ExpressError(404, "Listing Not Found");
     }
     req.flash("success", "Listing Deleted Successfully!");
-    console.log(deletedlisting);
     res.redirect("/listings");
 }));
 // Custom Error Handling Middleware
